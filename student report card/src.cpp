@@ -1,77 +1,310 @@
-#include<iostream>
-#include<fstream>
-#include<iomanip>
-using namespace std;
-
-class student
+#include<conio.h>
+#include<stdio.h>
+#include<process.h>
+#include<stdlib.h>
+struct student
 {
  int rollno;
  char name[50];
- int p_marks, c_marks, m_marks, e_marks, cs_marks;
- double per;
+ int p_marks,c_marks,m_marks,e_marks,cs_marks;
+ float per;
  char grade;
- void calculate(); //function to calculate grade
-public:
- void getdata(); //function to accept data from user
- void showdata() const; //function to show data on screen
- void show_tabular() const;
- int retrollno() const;
-}; //class ends here
-
-
-void student::calculate()
-{
- per=(p_marks+c_marks+m_marks+e_marks+cs_marks)/5.0;
- if(per>=60)
- grade='A';
- else if(per>=50)
- grade='B';
- else if(per>=33)
- grade='C';
- else
- grade='F';
+ int std;
+}st;
+ FILE *fptr;
+void write_student()
+   {
+    fptr=fopen("student.dat","ab");
+    printf("\nPlease Enter The New Details of student \n");
+    printf("\nEnter The roll number of student ");
+    scanf("%d",&st.rollno);
+    fflush(stdin);
+    printf("\n\nEnter The Name of student ");
+    gets(st.name);
+    printf("\nEnter The marks in physics out of 100 : ");
+    scanf("%d",&st.p_marks);
+    printf("\nEnter The marks in chemistry out of 100 : ");
+    scanf("%d",&st.c_marks);
+    printf("\nEnter The marks in maths out of 100 : ");
+    scanf("%d",&st.m_marks);
+    printf("\nEnter The marks in english out of 100 : ");
+    scanf("%d",&st.e_marks);
+    printf("\nEnter The marks in computer science out of 100 : ");
+    scanf("%d",&st.cs_marks);
+    st.per=(st.p_marks+st.c_marks+st.m_marks+st.e_marks+st.cs_marks)/5.0;
+    if(st.per>=60)
+       st.grade='A';
+    else if(st.per>=50 &&st.per<60)
+      st.grade='B';
+    else if(st.per>=33 &&st.per<50)
+      st.grade='C';
+    else
+     st.grade='F';
+    fwrite(&st,sizeof(st),1,fptr);
+    fclose(fptr);
+    printf("\n\nStudent Record Has Been Created ");
+    getch();
 }
 
-void student::getdata()
+
+
+void display_all()
 {
- cout<<"\nEnter The roll number of student ";
- cin>>rollno;
- cout<<"\n\nEnter The Name of student ";
- cin.ignore();
- cin.getline(name,50);
- cout<<"\nEnter The marks in physics out of 100 : ";
- cin>>p_marks;
- cout<<"\nEnter The marks in chemistry out of 100 : ";
- cin>>c_marks;
- cout<<"\nEnter The marks in maths out of 100 : ";
- cin>>m_marks;
- cout<<"\nEnter The marks in english out of 100 : ";
- cin>>e_marks;
- cout<<"\nEnter The marks in computer science out of 100 : ";
- cin>>cs_marks;
- calculate();
+    printf("\n\n\n\t\tDISPLAY ALL RECORD !!!\n\n");
+    fptr=fopen("student.dat","rb");
+    while((fread(&st,sizeof(st),1,fptr))>0)
+    {
+      printf("\nRoll Number of Student : %d",st.rollno);
+      printf("\nName of student : %s",st.name);
+      printf("\nMarks in Physics : %d",st.p_marks);
+      printf("\nMarks in Chemistry : %d",st.c_marks);
+      printf("\nMarks in Maths : %d",st.m_marks);
+      printf("\nMarks in English : %d",st.e_marks);
+      printf("\nMarks in Computer Science : %d",st.cs_marks);
+      printf("\nPercentage of student is  : %.2f",st.per);
+      printf("\nGrade of student is : %c",st.grade);
+      printf("\n\n====================================\n");
+      getch();
+    }
+    fclose(fptr);
+    getch();
 }
 
-void student::showdata() const
+
+
+void display_sp(int n)
 {
- cout<<"\nRoll number of student : "<<rollno;
- cout<<"\nName of student : "<<name;
- cout<<"\nMarks in Physics : "<<p_marks;
- cout<<"\nMarks in Chemistry : "<<c_marks;
- cout<<"\nMarks in Maths : "<<m_marks;
- cout<<"\nMarks in English : "<<e_marks;
- cout<<"\nMarks in Computer Science :"<<cs_marks;
- cout<<"\nPercentage of student is  :"<<per;
- cout<<"\nGrade of student is :"<<grade;
+    int flag=0;
+    fptr=fopen("student.dat","rb");
+    while((fread(&st,sizeof(st),1,fptr))>0)
+    {
+     if(st.rollno==n)
+        {
+            printf("\nRoll number of student : %d",st.rollno);
+            printf("\nName of student : %s",st.name);
+            printf("\nMarks in Physics : %d",st.p_marks);
+            printf("\nMarks in Chemistry : %d",st.c_marks);
+            printf("\nMarks in Maths : %d",st.m_marks);
+            printf("\nMarks in English : %d",st.e_marks);
+            printf("\nMarks in Computer Science : %d",st.cs_marks);
+            printf("\nPercentage of student is  : %.2f",st.per);
+            printf("\nGrade of student is : %c",st.grade);
+         flag=1;
+        }
+    }
+    fclose(fptr);
+if(flag==0)
+ printf("\n\nrecord not exist");
+    getch();
 }
 
-void student::show_tabular() const
+
+
+void modify_student()
 {
- cout<<rollno<<setw(6)<<" "<<name<<setw(10)<<p_marks<<setw(4)<<c_marks<<setw(4)<<m_marks<<setw(4)
- <<e_marks<<setw(4)<<cs_marks<<setw(8)<<per<<setw(6)<<grade<<endl;
+    int no,found=0;
+    printf("\n\n\tTo Modify ");
+    printf("\n\n\tPlease Enter The roll number of student");
+    scanf("%d",&no);
+    fptr=fopen("student.dat","rb+");
+    while((fread(&st,sizeof(st),1,fptr))>0 && found==0)
+    {
+    if(st.rollno==no)
+           {
+            printf("\nRoll number of student : %d",st.rollno);
+            printf("\nName of student : %s",st.name);
+            printf("\nMarks in Physics : %d",st.p_marks);
+            printf("\nMarks in Chemistry : %d",st.c_marks);
+            printf("\nMarks in Maths : %d",st.m_marks);
+            printf("\nMarks in English : %d",st.e_marks);
+            printf("\nMarks in Computer Science : %d",st.cs_marks);
+            printf("\nPercentage of student is  : %.2f",st.per);
+            printf("\nGrade of student is : %c",st.grade);
+            printf("\nPlease Enter The New Details of student \n");
+            printf("\nEnter The roll number of student ");
+            scanf("%d",&st.rollno);
+            fflush(stdin);
+            printf("\n\nEnter The Name of student ");
+            gets(st.name);
+            printf("\nEnter The marks in physics out of 100 : ");
+            scanf("%d",&st.p_marks);
+            printf("\nEnter The marks in chemistry out of 100 : ");
+            scanf("%d",&st.c_marks);
+            printf("\nEnter The marks in maths out of 100 : ");
+            scanf("%d",&st.m_marks);
+            printf("\nEnter The marks in english out of 100 : ");
+            scanf("%d",&st.e_marks);
+            printf("\nEnter The marks in computer science out of 100 : ");
+            scanf("%d",&st.cs_marks);
+            st.per=(st.p_marks+st.c_marks+st.m_marks+st.e_marks+st.cs_marks)/5.0;
+            if(st.per>=60)
+               st.grade='A';
+            else if(st.per>=50 && st.per<60)
+               st.grade='B';
+            else if(st.per>=33 && st.per<50)
+               st.grade='C';
+            else
+               st.grade='F';
+            fseek(fptr,-(long)sizeof(st),1);
+            fwrite(&st,sizeof(st),1,fptr);
+            printf("\n\n\t Record Updated");
+            found=1;
+           }
+         }
+    fclose(fptr);
+    if(found==0)
+    printf("\n\n Record Not Found ");
+    getch();
 }
 
-int  student::retrollno() const
+
+
+
+
+void delete_student()
+   {
+    int no;
+    FILE *fptr2;
+    printf("\n\n\n\tDelete Record");
+    printf("\n\nPlease Enter The roll number of student You Want To Delete");
+    scanf("%d",&no);
+    fptr=fopen("student.dat","rb");
+
+    fptr2=fopen("Temp.dat","wb");
+    rewind(fptr);
+    while((fread(&st,sizeof(st),1,fptr))>0)
+    {
+       if(st.rollno!=no)
+       {
+      fwrite(&st,sizeof(st),1,fptr2);
+       }
+    }
+    fclose(fptr2);
+    fclose(fptr);
+    remove("student.dat");
+    rename("Temp.dat","student.dat");
+    printf("\n\n\tRecord Deleted ..");
+    getch();
+}
+
+
+
+    void class_result()
+    {
+     fptr=fopen("student.dat","rb");
+     if(fptr==NULL)
+     {
+       printf("ERROR!!! FILE COULD NOT BE OPEN\n\n\n Go To Entry Menu to create File");
+       printf("\n\n\n Program is closing ....");
+       getch();
+       exit(0);
+     }
+
+     printf("\n\n\t\tALL STUDENTS RESULT \n\n");
+      printf("====================================================\n");
+      printf("R.No.  Name       P   C   M   E   CS  %age   Grade\n");
+      printf("====================================================\n");
+
+      while((fread(&st,sizeof(st),1,fptr))>0)
+     {
+       printf("%-6d %-10s %-3d %-3d %-3d %-3d %-3d %-3.2f  %-1c\n",st.rollno,st.name,st.p_marks,st.c_marks,st.m_marks,st.e_marks,st.cs_marks,st.per,st.grade);
+     }
+     fclose(fptr);
+     getch();
+}
+
+
+
+   void result()
+   {
+    int ans,rno;
+    char ch;
+    printf("\n\n\nRESULT MENU");
+    printf("\n\n\n1. Class Result\n\n2. Student Report Card\n\n3.Back to Main Menu");
+    printf("\n\n\nEnter Choice (1/2)? ");
+    scanf("%d",&ans);
+    switch(ans)
+    {
+     case 1 : class_result();break;
+     case 2 : {
+        do{
+        char ans;
+        printf("\n\nEnter Roll Number Of Student : ");
+        scanf("%d",&rno);
+        display_sp(rno);
+        printf("\n\nDo you want to See More Result (y/n)?");
+        scanf("%c",&ans);
+        }while(ans=='y'||ans=='Y');
+        break;
+           }
+     case 3: break;
+     default:  printf("\a");
+    }
+ }
+
+
+void intro()
 {
- return rollno;
+ printf("\n\n\t\t\t***************STUDENT REPORT CARD HANDLING SYSTEM PROJECT **************** ");
+ printf("\n\n\t\t\t\t\tMADE BY : ANSHIKA VERMA");
+ printf("\n\n\t\t\t\t\tUNIVERSITY ROLL NO. : 2014572");
+ printf("\n\n\t\t\t\t\tCOLLEGE : GRAPHIC ERA DEEMED TO BE UNIVERSITY ");
+ getch();
+}
+
+void entry_menu()
+{
+    char ch2;
+
+  printf("\n\n\n\tENTRY MENU");
+  printf("\n\n\t1.CREATE STUDENT RECORD");
+  printf("\n\n\t2.DISPLAY ALL STUDENTS RECORDS");
+  printf("\n\n\t3.SEARCH STUDENT RECORD ");
+  printf("\n\n\t4.MODIFY STUDENT RECORD");
+  printf("\n\n\t5.DELETE STUDENT RECORD");
+  printf("\n\n\t6.BACK TO MAIN MENU");
+  printf("\n\n\tPlease Enter Your Choice (1-6) ");
+  ch2=getche();
+  switch(ch2)
+  {
+    case '1':
+          write_student();
+          break;
+    case '2': display_all();break;
+    case '3':  {
+           int num;
+           printf("\n\n\tPlease Enter The roll number ");
+           scanf("%d",&num);
+           display_sp(num);
+           }
+           break;
+      case '4': modify_student();break;
+      case '5': delete_student();break;
+      case '6': break;
+      default:printf("\a");entry_menu();
+   }
+}
+void main()
+{
+  char ch;
+  intro();
+  do
+    {
+      printf("\n\n\n\tMAIN MENU");
+      printf("\n\n\t01. RESULT MENU");
+      printf("\n\n\t02. ENTRY/EDIT MENU");
+      printf("\n\n\t03. EXIT");
+      printf("\n\n\tPlease Select Your Option (1-3) ");
+      ch=getche();
+      switch(ch)
+      {
+         case '1':
+               result();
+               break;
+          case '2': entry_menu();
+                break;
+          case '3':exit(0);
+          default :printf("\a");
+    }
+    }while(ch!='3');
 }
